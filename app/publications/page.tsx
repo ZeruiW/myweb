@@ -4,10 +4,18 @@ import publicationsData, { Publication } from '@/data/publicationsData'
 export const metadata = genPageMetadata({ title: 'Publications' })
 
 // Tier badge component
-function TierBadge({ tier, coreRank, quartile }: { tier: string; coreRank?: string; quartile?: string }) {
+function TierBadge({
+  tier,
+  coreRank,
+  quartile,
+}: {
+  tier: string
+  coreRank?: string
+  quartile?: string
+}) {
   if (tier === 'top') {
     return (
-      <span className="inline-flex items-center gap-1 rounded-md bg-gradient-to-r from-primary-500 to-primary-600 px-2 py-0.5 text-xs font-semibold text-white">
+      <span className="from-primary-500 to-primary-600 inline-flex items-center gap-1 rounded-md bg-gradient-to-r px-2 py-0.5 text-xs font-semibold text-white">
         {coreRank ? `CORE ${coreRank}` : quartile ? `${quartile} Journal` : 'Top Tier'}
       </span>
     )
@@ -32,7 +40,7 @@ function PublicationCard({ pub, index }: { pub: Publication; index: number }) {
     <div
       className={`group relative rounded-xl border p-6 transition-all duration-200 hover:shadow-lg ${
         pub.highlight
-          ? 'border-primary-200 bg-gradient-to-br from-primary-50/50 to-transparent dark:border-primary-800/50 dark:from-primary-950/30'
+          ? 'border-primary-200 from-primary-50/50 dark:border-primary-800/50 dark:from-primary-950/30 bg-gradient-to-br to-transparent'
           : 'border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900/50'
       }`}
     >
@@ -45,7 +53,7 @@ function PublicationCard({ pub, index }: { pub: Publication; index: number }) {
 
       <div className="mt-2">
         {/* Title */}
-        <h3 className="text-lg font-semibold leading-tight text-gray-900 dark:text-gray-100 group-hover:text-primary-600 dark:group-hover:text-primary-400">
+        <h3 className="group-hover:text-primary-600 dark:group-hover:text-primary-400 text-lg leading-tight font-semibold text-gray-900 dark:text-gray-100">
           {pub.doi ? (
             <a
               href={`https://doi.org/${pub.doi}`}
@@ -66,7 +74,11 @@ function PublicationCard({ pub, index }: { pub: Publication; index: number }) {
             const isZerui = author.includes('Zerui Wang')
             return (
               <span key={i}>
-                {isZerui ? <strong className="text-primary-600 dark:text-primary-400">{author}</strong> : author}
+                {isZerui ? (
+                  <strong className="text-primary-600 dark:text-primary-400">{author}</strong>
+                ) : (
+                  author
+                )}
                 {i < arr.length - 1 ? ', ' : ''}
               </span>
             )
@@ -74,13 +86,11 @@ function PublicationCard({ pub, index }: { pub: Publication; index: number }) {
         </p>
 
         {/* Venue */}
-        <p className="mt-1 text-sm font-medium text-gray-700 dark:text-gray-300">
-          {pub.venue}
-        </p>
+        <p className="mt-1 text-sm font-medium text-gray-700 dark:text-gray-300">{pub.venue}</p>
 
         {/* Abstract (if available) */}
         {pub.abstract && (
-          <p className="mt-3 text-sm leading-relaxed text-gray-600 dark:text-gray-400 line-clamp-2">
+          <p className="mt-3 line-clamp-2 text-sm leading-relaxed text-gray-600 dark:text-gray-400">
             {pub.abstract}
           </p>
         )}
@@ -112,14 +122,16 @@ function PublicationCard({ pub, index }: { pub: Publication; index: number }) {
           {/* Acceptance Rate */}
           {pub.acceptanceRate && (
             <span className="text-xs text-gray-500 dark:text-gray-500">
-              Acceptance: <strong className="text-gray-700 dark:text-gray-300">{pub.acceptanceRate}</strong>
+              Acceptance:{' '}
+              <strong className="text-gray-700 dark:text-gray-300">{pub.acceptanceRate}</strong>
             </span>
           )}
 
           {/* Citations */}
           {pub.citations > 0 && (
             <span className="text-xs text-gray-500 dark:text-gray-500">
-              Citations: <strong className="text-primary-600 dark:text-primary-400">{pub.citations}</strong>
+              Citations:{' '}
+              <strong className="text-primary-600 dark:text-primary-400">{pub.citations}</strong>
             </span>
           )}
 
@@ -139,7 +151,7 @@ function PublicationCard({ pub, index }: { pub: Publication; index: number }) {
                 href={`https://doi.org/${pub.doi}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-xs font-medium text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300"
+                className="text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 text-xs font-medium"
               >
                 DOI ↗
               </a>
@@ -149,7 +161,7 @@ function PublicationCard({ pub, index }: { pub: Publication; index: number }) {
                 href={pub.pdf}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-xs font-medium text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300"
+                className="text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 text-xs font-medium"
               >
                 PDF ↗
               </a>
@@ -159,7 +171,7 @@ function PublicationCard({ pub, index }: { pub: Publication; index: number }) {
                 href={pub.arxiv}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-xs font-medium text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300"
+                className="text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 text-xs font-medium"
               >
                 arXiv ↗
               </a>
@@ -180,7 +192,7 @@ export default function Publications() {
     <div className="divide-y divide-gray-200 dark:divide-gray-700">
       {/* Header */}
       <div className="space-y-4 pt-6 pb-8 md:space-y-5">
-        <h1 className="text-3xl font-extrabold leading-9 tracking-tight text-gray-900 sm:text-4xl sm:leading-10 md:text-5xl md:leading-13 dark:text-gray-100">
+        <h1 className="text-3xl leading-9 font-extrabold tracking-tight text-gray-900 sm:text-4xl sm:leading-10 md:text-5xl md:leading-13 dark:text-gray-100">
           Publications
         </h1>
         <p className="text-lg leading-7 text-gray-500 dark:text-gray-400">
@@ -207,7 +219,7 @@ export default function Publications() {
             <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
               Top Tier Publications
             </h2>
-            <span className="rounded-full bg-primary-100 px-3 py-1 text-sm font-medium text-primary-700 dark:bg-primary-900/50 dark:text-primary-300">
+            <span className="bg-primary-100 text-primary-700 dark:bg-primary-900/50 dark:text-primary-300 rounded-full px-3 py-1 text-sm font-medium">
               {topTier.length} papers
             </span>
           </div>
@@ -268,7 +280,7 @@ export default function Publications() {
               href="https://scholar.google.com/citations?user=QQpnwdoAAAAJ"
               target="_blank"
               rel="noopener noreferrer"
-              className="font-medium text-primary-600 hover:underline dark:text-primary-400"
+              className="text-primary-600 dark:text-primary-400 font-medium hover:underline"
             >
               Google Scholar
             </a>
