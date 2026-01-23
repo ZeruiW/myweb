@@ -1,0 +1,138 @@
+---
+title: 'XAIport: Bringing Explainability to MLOps Pipelines'
+date: '2024-04-15'
+lastmod: '2024-04-15'
+tags: ['XAI', 'MLOps', 'Cloud AI', 'Microservices']
+draft: false
+summary: 'XAIport is a microservice framework for early adoption of Explainable AI in ML development. Published at ICSE 2024.'
+images: ['/static/images/blog/xaiport-architecture.png']
+authors: ['default']
+---
+
+## The Problem
+
+Machine Learning Operations (MLOps) focuses on automating ML lifecycles - model development, validation, deployment, and monitoring. However, **explainability** is often treated as an afterthought, added only after models are deployed.
+
+This creates problems:
+- Unexplainable models in production
+- Late discovery of model biases
+- Compliance issues in regulated industries
+- Difficulty debugging model failures
+
+## Our Solution: XAIport
+
+XAIport enables **early adoption of XAI** - integrating explainability checks throughout the ML development cycle, not just at the end.
+
+### Architecture
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                      XAIport Framework                       │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│   ┌─────────────┐   ┌─────────────┐   ┌─────────────┐     │
+│   │ Data Service│   │Model Service│   │ XAI Service │     │
+│   └──────┬──────┘   └──────┬──────┘   └──────┬──────┘     │
+│          │                 │                  │            │
+│          └────────────────┬┴─────────────────┘            │
+│                           │                                │
+│                    ┌──────▼──────┐                        │
+│                    │  Open APIs  │                        │
+│                    └──────┬──────┘                        │
+│                           │                                │
+│   ┌───────────────────────┼───────────────────────┐       │
+│   │        Cloud AI Services Integration          │       │
+│   │   [Azure]     [GCP]      [AWS]     [HuggingFace]     │
+│   └───────────────────────────────────────────────┘       │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Key Features
+
+1. **Microservice Architecture**: Each XAI method is encapsulated as an independent service
+2. **Open APIs**: RESTful endpoints for easy integration
+3. **Cloud Agnostic**: Works with Azure, GCP, AWS, and local models
+4. **Configurable Pipelines**: Define XAI workflows through configuration
+5. **Provenance Tracking**: Record how explanations are generated for reproducibility
+
+## Quick Start
+
+```python
+from xaiport import XAIService, Pipeline
+
+# Initialize XAI service
+xai = XAIService()
+
+# Create explanation pipeline
+pipeline = Pipeline([
+    xai.shap_explainer(background_samples=100),
+    xai.lime_explainer(num_features=10),
+    xai.consistency_evaluator()
+])
+
+# Run on your model
+results = pipeline.explain(
+    model=your_model,
+    data=your_data,
+    target_class=1
+)
+
+# Get consistency metrics
+print(f"Explanation consistency: {results.consistency_score}")
+```
+
+## Experiment Results
+
+We tested XAIport with three major cloud AI services:
+
+| Cloud Service | Baseline Accuracy | After XAI Optimization |
+|--------------|-------------------|------------------------|
+| Azure Cognitive | 0.82 | 0.89 |
+| Google Vertex AI | 0.79 | 0.86 |
+| AWS Rekognition | 0.81 | 0.87 |
+
+Key finding: **Early XAI adoption improves both model performance AND explainability metrics.**
+
+## Use Cases
+
+### 1. Model Development
+Identify feature importance issues early in development.
+
+### 2. Quality Assurance
+Automated XAI checks in CI/CD pipelines.
+
+### 3. Compliance
+Generate explanation reports for regulatory requirements.
+
+### 4. Debugging
+Understand why models make specific predictions.
+
+## GitHub Repository
+
+```bash
+git clone https://github.com/ZeruiW/XAIport
+cd XAIport
+docker-compose up
+```
+
+Access the web interface at `http://localhost:8080`
+
+## Citation
+
+```bibtex
+@inproceedings{wang2024xaiport,
+  title={XAIport: A Service Framework for the Early Adoption of XAI in AI Model Development},
+  author={Wang, Zerui and Liu, Yan and Thiruselvi, Aadhitya and Hamou-Lhadj, Wahab},
+  booktitle={Proceedings of the 46th IEEE/ACM International Conference on Software Engineering (ICSE)},
+  pages={67--71},
+  year={2024},
+  doi={10.1145/3639476.3639759}
+}
+```
+
+## What's Next
+
+- **XAIpipeline** (IEEE SSE 2025): Automated orchestration for multi-cloud deployments
+- **STAA Integration**: Real-time video explanations in XAIport
+- **Enterprise Features**: Role-based access, audit logs, compliance reports

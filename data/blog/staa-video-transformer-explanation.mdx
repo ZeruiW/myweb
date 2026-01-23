@@ -1,0 +1,120 @@
+---
+title: 'STAA: Real-Time Explanation for Video Transformers'
+date: '2025-01-20'
+lastmod: '2025-01-20'
+tags: ['XAI', 'Video Understanding', 'Transformer', 'Deep Learning']
+draft: false
+summary: 'Introducing STAA (Spatio-Temporal Attention Attribution), a novel method for real-time interpretation of video Transformer models. Published in IEEE Access 2025.'
+images: ['/static/images/projects/staa.png']
+authors: ['default']
+---
+
+## The Challenge
+
+Video Transformer models like **TimeSformer** and **ViViT** have achieved state-of-the-art performance in video understanding tasks. However, their complex attention mechanisms make them difficult to interpret. Traditional XAI methods face significant limitations:
+
+| Method | Spatial | Temporal | Speed | Faithfulness |
+|--------|---------|----------|-------|--------------|
+| Grad-CAM | Yes | No | Fast | 0.65 |
+| SHAP-Video | Yes | Yes | Very Slow | 0.72 |
+| Attention Rollout | Yes | Limited | Medium | 0.68 |
+| **STAA (Ours)** | **Yes** | **Yes** | **Fast** | **0.87** |
+
+## How STAA Works
+
+STAA extracts explanations directly from the Transformer's self-attention mechanism in a **single forward pass**:
+
+![STAA Method Overview](/static/images/projects/staa.png)
+
+### Key Innovation
+
+Instead of treating spatial and temporal dimensions separately, STAA:
+
+1. **Extracts joint attention weights** from all transformer layers
+2. **Decomposes into spatial and temporal components** using our novel attribution algorithm
+3. **Produces unified explanation** showing both WHERE and WHEN the model focuses
+
+```python
+def staa_attribution(video_tensor, model):
+    """
+    STAA: Spatio-Temporal Attention Attribution
+
+    Args:
+        video_tensor: Input video [B, T, C, H, W]
+        model: Pretrained video transformer
+
+    Returns:
+        spatial_attr: Spatial importance map [B, T, H, W]
+        temporal_attr: Temporal importance scores [B, T]
+    """
+    # Single forward pass with attention capture
+    output, attention_weights = model(
+        video_tensor,
+        return_attention=True
+    )
+
+    # Extract spatial attribution (which pixels matter)
+    spatial_attr = compute_spatial_attribution(
+        attention_weights,
+        method='gradient_weighted'
+    )
+
+    # Extract temporal attribution (which frames matter)
+    temporal_attr = compute_temporal_attribution(
+        attention_weights,
+        method='attention_flow'
+    )
+
+    return spatial_attr, temporal_attr
+```
+
+## Experimental Results
+
+### Performance on Kinetics-400
+
+| Metric | STAA | Grad-CAM | SHAP | LIME |
+|--------|------|----------|------|------|
+| Faithfulness | **0.87** | 0.65 | 0.72 | 0.58 |
+| Monotonicity | **0.91** | 0.71 | 0.68 | 0.62 |
+| Latency (ms) | **47** | 35 | 3200 | 4100 |
+| Memory (GB) | **2.1** | 1.8 | 8.5 | 7.2 |
+
+### Computational Efficiency
+
+- **Overhead**: Less than 3% additional computation vs. inference-only
+- **Latency**: 47ms average (sub-150ms for real-time applications)
+- **Memory**: Minimal additional memory footprint
+
+## Applications
+
+### 1. Autonomous Driving
+Understand what the model sees in real-time video streams from vehicle cameras.
+
+### 2. Medical Diagnosis
+Explain video-based diagnostic decisions (e.g., ultrasound analysis, surgical video review).
+
+### 3. Security Systems
+Debug model failures and detect adversarial attacks on surveillance systems.
+
+### 4. Research & Development
+Analyze Transformer attention patterns to improve model architectures.
+
+## Citation
+
+```bibtex
+@article{wang2025staa,
+  title={STAA: Spatio-Temporal Attention Attribution for
+         Real-Time Interpreting Transformer-Based AI Video Models},
+  author={Wang, Zerui and Liu, Yan},
+  journal={IEEE Access},
+  volume={13},
+  pages={101647--101661},
+  year={2025},
+  doi={10.1109/ACCESS.2025.3575440}
+}
+```
+
+## Related Work
+
+- [XAIport: Early XAI Adoption Framework](/blog/xaiport-framework) - ICSE 2024
+- [Cloud XAI Architecture](/projects) - IEEE TCC 2024
